@@ -33,16 +33,27 @@
 						</li>
 						@if (!SignInManager.IsSignedIn(User))
 						{
-						<li class="nav-item ml-auto">
+						<li class="nav-item">
 							<a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
 						</li>
-						<li class="nav-item ml-auto">
+						<li class="nav-item">
 							<a class="nav-link" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
-						</li>
+							</li>
 						}
 						else
 						{
-						<li class="nav-item ml-auto">
+							if(await UserManager.IsInRoleAsync(currentUser, "Admin"))
+							{
+								<li>
+									<a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Control Panel</a>
+								</li>
+							}else if(await UserManager.IsInRoleAsync(currentUser, "Student"))
+							{
+								<li>
+									<a class="nav-link" asp-area="" asp-controller="Student" asp-action="Index">Control Panel</a>
+								</li>
+							}
+							<li class="nav-item ms-auto">
 							<a class="btn btn-danger" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
 						</li>
 						}
