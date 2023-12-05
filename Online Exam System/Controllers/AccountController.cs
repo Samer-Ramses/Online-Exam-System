@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Online_Exam_System.Data;
 using Online_Exam_System.Models;
@@ -54,7 +55,7 @@ namespace Online_Exam_System.Controllers
             TempData["Error"] = "Wrong credentials. Please try again";
             return View(loginViewModel);
         }
-
+        
         public IActionResult Register()
         {
             var response = new RegisterViewModel();
@@ -76,6 +77,7 @@ namespace Online_Exam_System.Controllers
             {
                 Email = registerViewModel.EmailAddress,
                 UserName = registerViewModel.EmailAddress,
+                role = Roles.student,
             };
             var newUserResponse = await _userManager.CreateAsync(newUser, registerViewModel.Password);
             if(!newUserResponse.Succeeded)
