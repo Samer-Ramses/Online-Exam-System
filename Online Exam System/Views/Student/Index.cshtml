@@ -4,7 +4,7 @@
 @inject UserManager<User> UserManager
 
 @{
-	ViewData["Title"] = "Admin Control Panel";
+	ViewData["Title"] = "Student Control Panel";
 	var currentUser = await UserManager.GetUserAsync(User);
 	var userName = currentUser.name == null ? "Unknown" : currentUser.name;
 }

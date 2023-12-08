@@ -1,29 +1,100 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Online_Exam_System.Data;
+using Online_Exam_System.Models;
+using Online_Exam_System.ViewModels;
 
 namespace Online_Exam_System.Controllers
 {
-	[Authorize(Roles = "Admin")]
-	public class AdminController : Controller
-	{
-		public IActionResult Index()
-		{
-			return View();
-		}
+    [Authorize(Roles = "Admin")]
+    public class AdminController : Controller
+    {
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly ApplicationDbContext _context;
 
-		public IActionResult CreateUser()
-		{
-			return View();
-		}
+        public AdminController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationDbContext context, RoleManager<IdentityRole> roleManager)
+        {
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _signInManager = signInManager;
+            _context = context;
+        }
 
-		public IActionResult AllUsers()
-		{
-			return View();
-		}
+        public IActionResult Index()
+        {
+            return View();
+        }
 
-		public IActionResult Settings()
-		{
-			return View();
-		}
-	}
+        public IActionResult CreateUser()
+        {
+            var response = new CreateUserViewModel();
+            return View(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(CreateUserViewModel createUserViewModel)
+        {
+            if (!ModelState.IsValid) return View(createUserViewModel);
+            var user = await _userManager.FindByEmailAsync(createUserViewModel.EmailAddress);
+            if (user != null)
+            {
+                TempData["Error"] = "This email address is already in use";
+                return View(createUserViewModel);
+            }
+
+            var newUser = new User()
+            {
+                Email = createUserViewModel.EmailAddress,
+                UserName = createUserViewModel.EmailAddress,
+                name = createUserViewModel.Name,
+                role = createUserViewModel.Role,
+            };
+            var newUserResponse = await _userManager.CreateAsync(newUser, createUserViewModel.Password);
+            if (!newUserResponse.Succeeded)
+            {
+                TempData["Error"] = newUserResponse.Errors.First().Description;
+                return View(createUserViewModel);
+            }
+            else
+            {
+                // Process profile picture
+                if (createUserViewModel.ProfilePicture != null && createUserViewModel.ProfilePicture.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await createUserViewModel.ProfilePicture.CopyToAsync(memoryStream);
+                        newUser.ProfilePictureData = memoryStream.ToArray();
+                    }
+                }
+
+                // Check if the role exists
+                var roleExists = await _roleManager.RoleExistsAsync(createUserViewModel.Role);
+
+                // If it doesn't exist, create it
+                if (!roleExists)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(createUserViewModel.Role));
+                }
+
+                //add the user to the "student" role
+                await _userManager.AddToRoleAsync(newUser, createUserViewModel.Role);
+
+            }
+
+            return RedirectToAction("Index", "Admin");
+        }
+
+        public IActionResult AllUsers()
+        {
+            return View();
+        }
+
+        public IActionResult Settings()
+        {
+            return View();
+        }
+    }
 }
