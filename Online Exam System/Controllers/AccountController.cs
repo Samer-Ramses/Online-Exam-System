@@ -87,6 +87,16 @@ namespace Online_Exam_System.Controllers
             }
             else
             {
+                // Process profile picture
+                if (registerViewModel.ProfilePicture != null && registerViewModel.ProfilePicture.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await registerViewModel.ProfilePicture.CopyToAsync(memoryStream);
+                        newUser.ProfilePictureData = memoryStream.ToArray();
+                    }
+                }
+
                 // Check if the role exists
                 var roleExists = await _roleManager.RoleExistsAsync(Roles.student);
 
@@ -98,6 +108,7 @@ namespace Online_Exam_System.Controllers
 
                 //add the user to the "student" role
                 await _userManager.AddToRoleAsync(newUser, Roles.student);
+
             }
 
             return RedirectToAction("Index", "Home");
@@ -108,6 +119,21 @@ namespace Online_Exam_System.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
+        }
+
+
+        [HttpGet]
+        public IActionResult GetProfilePicture(string userId)
+        {
+            var user = _userManager.FindByIdAsync(userId).Result;
+
+            if (user != null && user.ProfilePictureData != null)
+            {
+                return File(user.ProfilePictureData, "image/jpeg"); // Adjust the content type based on your image format
+            }
+
+            // If no image is found, return a default image or a placeholder
+            return File("~/path/to/default/image.jpg", "image/jpeg"); // Adjust the path and content type accordingly
         }
     }
 }

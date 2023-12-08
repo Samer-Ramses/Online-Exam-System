@@ -8,5 +8,7 @@ namespace Online_Exam_System.Models
     {
         public string? name { get; set; }
         public string? role { get; set; }
+        public byte[]? ProfilePictureData { get; set; }
+
     }
 }

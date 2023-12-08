@@ -59,6 +59,7 @@ namespace Online_Exam_System.Data
                 EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(null, "TemporaryPassword"),
                 SecurityStamp = string.Empty
+                
             };
         }
     }

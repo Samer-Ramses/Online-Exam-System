@@ -15,5 +15,8 @@ namespace Online_Exam_System.ViewModels
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Password do not match")]
         public string ConfirmPassword { get; set; }
+        [Required(ErrorMessage = "Image is reduired")]
+        [Display(Name = "Profile Picture")]
+        public IFormFile ProfilePicture { get; set; }
     }
 }
