@@ -1,0 +1,40 @@
+﻿@model IEnumerable<User>
+
+@{
+    ViewData["Title"] = "List of users";
+}
+
+<h1>This is list of all current users in the system</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Role</th>
+            <th scope="col">Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int count = 0;
+            foreach (var item in Model)
+            {
+                if (item.role == null)
+                    continue;
+                count++;
+                <tr>
+                    <th scope="row">@count</th>
+                    <td>@item.name</td>
+                    <td>@item.Email</td>
+                    <td>@item.role</td>
+                    <td>
+                        <a asp-action="EditUser" asp-controller="Admin" asp-route-id=@item.Id type="button" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="DeleteUser" asp-controller="Admin" asp-route-id=@item.Id type="button" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
