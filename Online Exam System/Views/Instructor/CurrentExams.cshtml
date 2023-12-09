@@ -1,7 +1,47 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Online_Exam_System.ViewModels;
+@model CurrentExamsViewModel
+
 @{
+    ViewData["Title"] = "List of your exams";
 }
 
 <h1>Current Exams</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Code</th>
+            <th scope="col">Start time</th>
+            <th scope="col">Status</th>
+            <th scope="col">Questions Count</th>
+            <th scope="col">Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int count = 0;
+            foreach (var item in Model.Exams)
+            {
+
+                count++;
+                        <tr>
+                            <th scope="row">@count</th>
+                            <td>@item.ExamName</td>
+                            <td>@item.ExamCode</td>
+                            <td>@item.StartTime</td>
+                            <td>
+                                <span class="badge bg-info">@(Model.ExamQuestionsPointSum[item.ExamID] < item.ExamPoints ? "Not Completed" : "Completed")</span>
+                            </td>
+                            <td>@Model.ExamQuestionCounts[item.ExamID]</td>
+                            <td>
+                                <a asp-action="" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-success btn-sm">Add question</a>
+                                <a asp-action="" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-primary btn-sm">Edit</a>
+                                <a asp-action="DeleteExam" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+            }
+        }
+    </tbody>
+</table>
