@@ -9,6 +9,8 @@ namespace Online_Exam_System.Models
         [Key]
         public int ExamID { get; set; }
 
+        [Required]
+        public string ExamCode { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -23,6 +25,12 @@ namespace Online_Exam_System.Models
         [Required]
         public int DurationMinutes { get; set; }
 
+        [Required]
+        public int ExamPoints { get; set; }
+
+        [Required]
+        public int SuccessDegree { get; set; }
+        
         [Required]
         public string? InstructorID { get; set; }
 

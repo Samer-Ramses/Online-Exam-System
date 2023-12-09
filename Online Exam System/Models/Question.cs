@@ -14,6 +14,9 @@ namespace Online_Exam_System.Models
         [Required]
         public string QuestionText { get; set; }
 
+        [Required]
+        public int QuestionPoints { get; set; }
+
         [ForeignKey("ExamID")]
         public virtual Exam Exam { get; set; }
     }

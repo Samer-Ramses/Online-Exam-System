@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+	ViewData["Title"] = "Instructor Control Panel";
+	var currentUser = await UserManager.GetUserAsync(User);
+	var userName = currentUser.name == null ? "Unknown" : currentUser.name;
+}
+
+<h1 class="text-center">Welcome, @userName</h1>
+<div class="row text-center mt-5 gap-5 justify-content-center">
+	<div class="col-sm-3 col-12 border border-light-subtle p-5">
+		<h3>you can add new exam to the system by pressing below button</h3>
+		<a type="button" class="btn btn-primary mt-3" asp-area="" asp-controller="Instructor" asp-action="CreateExam">Add new exam</a>
+	</div>
+	<div class="col-sm-3 col-12 border border-light-subtle p-5">
+		<h3>see all the exams you make in the system by pressing below button</h3>
+		<a type="button" class="btn btn-primary mt-3" asp-area="" asp-controller="Instructor" asp-action="CurrentExams">Current exams</a>
+	</div>
+	<div class="col-sm-3 col-12 border border-light-subtle p-5">
+		<h3>you can change your account information by pressing below button</h3>
+		<a type="button" class="btn btn-primary mt-3" asp-area="" asp-controller="Instructor" asp-action="Settings" asp-route-id=@currentUser.Id>Settings</a>
+	</div>
+</div>

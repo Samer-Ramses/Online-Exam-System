@@ -1,0 +1,83 @@
+﻿@using Online_Exam_System.ViewModels
+@model CreateExamViewModel
+
+@{
+    ViewData["Title"] = "Create New Exam";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h4 class="alert alert-primary" role="alert">Create new exam</h4>
+        <div class="alert alert-warning" role="alert">
+            <h4 >Warning</h4>
+            <p>
+                This page is only used to create new exams not for adding questions if you want to add questions to an exam you made
+                <a asp-controller="Instructor" asp-action="CurrentExams">Press here</a>
+            </p>
+        </div> 
+        @if (TempData["Error"] != null)
+        {
+            <div class="col-md-12 alert alert-danger">
+                <span><b>Sorry!</b> - @TempData["Error"] </span>
+            </div>
+        }
+
+        <div class="row p-3 justify-content-center" style="background: #f4f4f4; border-radius: 15px">
+            <div class="col-md-10">
+                <form asp-action="CreateExam">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="form-group m-3">
+                        <label asp-for="ExamName" class="control-label"></label>
+                        <input asp-for="ExamName" class="form-control" />
+                        <span asp-validation-for="ExamName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group m-3">
+                        <label asp-for="ExamCode" class="control-label"></label>
+                        <input asp-for="ExamCode" class="form-control" />
+                        <span asp-validation-for="ExamCode" class="text-danger"></span>
+                    </div>
+                    <div class="form-group m-3">
+                        <label asp-for="StartDate" class="control-label"></label>
+                        <input asp-for="StartDate" type="date" class="form-control" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group m-3">
+                        <label asp-for="StartTime" class="control-label"></label>
+                        <input asp-for="StartTime" type="time" class="form-control" />
+                        <span asp-validation-for="StartTime" class="text-danger"></span>
+                    </div>
+                    <div class="form-group m-3">
+                        <label asp-for="EndDate" class="control-label"></label>
+                        <input asp-for="EndDate" type="date" class="form-control" />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group m-3">
+                        <label asp-for="EndTime" class="control-label"></label>
+                        <input asp-for="EndTime" type="time" class="form-control" />
+                        <span asp-validation-for="EndTime" class="text-danger"></span>
+                    </div>
+                    <div class="form-group m-3">
+                        <label asp-for="DurationMinutes" class="control-label"></label>
+                        <input asp-for="DurationMinutes" type="number" class="form-control" />
+                        <span asp-validation-for="DurationMinutes" class="text-danger"></span>
+                    </div>
+                    <div class="form-group m-3">
+                        <label asp-for="ExamPoints" class="control-label"></label>
+                        <input asp-for="ExamPoints" type="number" class="form-control" />
+                        <span asp-validation-for="ExamPoints" class="text-danger"></span>
+                    </div>
+                    <div class="form-group m-3">
+                        <label asp-for="SuccessDegree" class="control-label"></label>
+                        <input asp-for="SuccessDegree" type="number" class="form-control" />
+                        <span asp-validation-for="SuccessDegree" class="text-danger"></span>
+                    </div>
+                    <div class="form-group d-flex justify-content-center gap-1">
+                        <input class="btn btn-outline-success float-right" type="submit" value="Create" />
+                        <a class="btn btn-outline-secondary" asp-controller="Instructor" asp-action="Index">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

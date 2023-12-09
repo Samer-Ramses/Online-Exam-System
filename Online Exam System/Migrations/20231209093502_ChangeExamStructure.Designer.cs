@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_Exam_System.Data;
 
@@ -11,9 +12,11 @@ using Online_Exam_System.Data;
 namespace Online_Exam_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231209093502_ChangeExamStructure")]
+    partial class ChangeExamStructure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,10 +198,6 @@ namespace Online_Exam_System.Migrations
 
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("ExamCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExamName")
                         .IsRequired()
@@ -396,13 +395,13 @@ namespace Online_Exam_System.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b99efbc9-536a-4256-9080-c86a37d94785",
+                            ConcurrencyStamp = "1436f2dc-bc6c-43ca-8497-feb0b0983066",
                             Email = "TemporaryEmail@example.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "TEMPORARYEMAIL@EXAMPLE.COM",
                             NormalizedUserName = "TEMPORARY-USERNAME",
-                            PasswordHash = "AQAAAAIAAYagAAAAECMkxdUGiQUaB0JAbVmXzlmsc5kzRA9zgOvY7fDYAwCVx0Hv3jhXMUYovMT4UJxtWw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBjDCzhJp5AGP+l1LQC00WPnRaBgq6UZKtFSSGxAMqLMBDp86eVsHidsRoqS8IfMgg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
