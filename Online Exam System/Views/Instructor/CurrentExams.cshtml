@@ -26,21 +26,21 @@
             {
 
                 count++;
-                        <tr>
-                            <th scope="row">@count</th>
-                            <td>@item.ExamName</td>
-                            <td>@item.ExamCode</td>
-                            <td>@item.StartTime</td>
-                            <td>
-                                <span class="badge bg-info">@(Model.ExamQuestionsPointSum[item.ExamID] < item.ExamPoints ? "Not Completed" : "Completed")</span>
-                            </td>
-                            <td>@Model.ExamQuestionCounts[item.ExamID]</td>
-                            <td>
-                                <a asp-action="" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-success btn-sm">Add question</a>
-                                <a asp-action="" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-primary btn-sm">Edit</a>
-                                <a asp-action="DeleteExam" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-danger btn-sm">Delete</a>
-                            </td>
-                        </tr>
+                                <tr>
+                                    <th scope="row">@count</th>
+                                    <td>@item.ExamName</td>
+                                    <td>@item.ExamCode</td>
+                                    <td>@item.StartTime</td>
+                                    <td>
+                                        <span class="badge bg-info">@(Model.ExamQuestionsPointSum[item.ExamID] < item.ExamPoints ? "Not Completed" : "Completed")</span>
+                                    </td>
+                                    <td>@Model.ExamQuestionCounts[item.ExamID]</td>
+                                    <td>
+                                        <a asp-action="" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-success btn-sm">Add question</a>
+                                        <a asp-action="EditExam" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-primary btn-sm">Edit</a>
+                                        <a asp-action="DeleteExam" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-danger btn-sm">Delete</a>
+                                    </td>
+                                </tr>
             }
         }
     </tbody>
