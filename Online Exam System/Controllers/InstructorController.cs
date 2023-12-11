@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Online_Exam_System.Data;
@@ -250,9 +250,57 @@ namespace Online_Exam_System.Controllers
             }
         }
 
-        public IActionResult Settings()
+        public IActionResult Settings(string id)
         {
-            return View();
+            var user = _context.Users.FirstOrDefault(user => user.Id ==  id);
+            if (user == null) return View("Error");
+            var settingsVM = new SettingsViewModel
+            {
+                EmailAddress = user.Email,
+                Name = user.name,
+                Password = "",
+                ConfirmPassword = "",
+            };
+            return View(settingsVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Settings(string id, SettingsViewModel settingsViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("", "Failed to edit");
+                return View("Settings", settingsViewModel);
+            }
+            var user = _context.Users.FirstOrDefault(x => x.Id == id);
+            if (user != null)
+            {
+                user.name = settingsViewModel.Name;
+                user.Email = settingsViewModel.EmailAddress;
+                if(settingsViewModel.Password != null)
+                {
+                    await _userManager.RemovePasswordAsync(user);
+                    await _userManager.AddPasswordAsync(user, settingsViewModel.Password);
+                }
+                if(settingsViewModel.ProfilePicture  != null)
+                {
+                    // Process profile picture
+                    if (settingsViewModel.ProfilePicture != null && settingsViewModel.ProfilePicture.Length > 0)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await settingsViewModel.ProfilePicture.CopyToAsync(memoryStream);
+                            user.ProfilePictureData = memoryStream.ToArray();
+                        }
+                    }
+                }
+                var editedUserResponse = await _userManager.UpdateAsync(user);
+                return RedirectToAction("Index", "Instructor");
+            }
+            else
+            {
+                return View(settingsViewModel);
+            }
         }
     }
 }
