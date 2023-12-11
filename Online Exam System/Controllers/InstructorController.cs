@@ -67,11 +67,13 @@ namespace Online_Exam_System.Controllers
 
             var examQuestionCounts = userExams.ToDictionary(exam => exam.ExamID, exam => _context.Questions.Count(q => q.ExamID == exam.ExamID));
             var examQuestionsPointsSum = userExams.ToDictionary(exam => exam.ExamID, exam => _context.Questions.Where(q => q.ExamID == exam.ExamID).Sum(q => q.QuestionPoints));
+            bool isNotCompleted = userExams.Any(exam => _context.Questions.Where(q => q.ExamID == exam.ExamID).Any(question => question.OptionsNumber > _context.Options.Count(o => o.QuestionID == question.QuestionID)));
             var viewModel = new CurrentExamsViewModel()
             {
                 Exams = userExams,
                 ExamQuestionCounts = examQuestionCounts,
                 ExamQuestionsPointSum = examQuestionsPointsSum,
+                isNotCompleted = isNotCompleted,
             };
 
             return View(viewModel);
@@ -132,6 +134,120 @@ namespace Online_Exam_System.Controllers
             _context.Exams.Remove(exam);
             _context.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public IActionResult CurrentQuestion(int id)
+        {
+            var questions = _context.Questions.ToList();
+            var examQuestions = questions.Where(exam => exam.ExamID == id).ToList();
+            var questionOptionsCounts = examQuestions.ToDictionary(question => question.QuestionID, question => _context.Options.Count(q => q.QuestionID == question.QuestionID));
+            var viewModel = new CurrentQuestionsViewModel
+            {
+                Questions = examQuestions,
+                QuestionOptionsCounts = questionOptionsCounts,
+            };
+            return View(viewModel);
+        }
+
+        public IActionResult AddQuestionForm()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddQuestionForm(int id, AddQuestionViewModel addQuestionViewModel)
+        {
+            if(!ModelState.IsValid) return View(addQuestionViewModel);
+            if(id == null) return View("Error");
+            var currentUserId = await _userManager.GetUserAsync(User);
+            var userId = currentUserId?.Id;
+            var theExam = _context.Exams.FirstOrDefault(x => x.ExamID == id);
+            var pointsSum = _context.Questions.Where(q => q.ExamID == theExam.ExamID).Sum(q => q.QuestionPoints);
+            if (theExam == null || theExam.InstructorID != userId)
+            {
+                TempData["Error"] = "Wrong credentials. Please try again";
+                return View(addQuestionViewModel);
+            }else if(theExam.ExamPoints < pointsSum + addQuestionViewModel.QuestionPoints)
+            {
+                TempData["Error"] = "The question points are larger than exam points";
+                return View(addQuestionViewModel);
+            }
+            else
+            {
+                var newQuestion = new Question
+                {
+                    QuestionText = addQuestionViewModel.QuestionText,
+                    QuestionPoints = addQuestionViewModel.QuestionPoints,
+                    OptionsNumber = addQuestionViewModel.OptionsNumber,
+                    ExamID = id,
+                };
+
+                _context.Questions.Add(newQuestion);
+                _context.SaveChanges();
+                return RedirectToAction("CurrentExams", "Instructor");
+            }
+        }
+
+        public IActionResult AddOptions(int id)
+        {
+            var question = _context.Questions.FirstOrDefault(x => x.QuestionID == id);
+            var options = new List<OptionViewModel>();
+            for(int i = 0; i < question.OptionsNumber; i++)
+            {
+                var option = new OptionViewModel();
+                options.Add(option);
+            }
+            var viewModel = new AddOptionsViewModel
+            {
+                options = options,
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOptions(int id, AddOptionsViewModel addOptionsViewModel)
+        {
+            if (!ModelState.IsValid) return View(addOptionsViewModel);
+            if (id == null) return View("Error");
+            var currentUserId = await _userManager.GetUserAsync(User);
+            var userId = currentUserId?.Id;
+            var theExam = _context.Exams.FirstOrDefault(x => x.ExamID == _context.Questions.FirstOrDefault(q => q.QuestionID == id).ExamID);
+            var question = _context.Questions.FirstOrDefault(x => x.QuestionID == id);
+            if (theExam == null || theExam.InstructorID != userId)
+            {
+                TempData["Error"] = "Wrong credentials. Please try again";
+                return View(addOptionsViewModel);
+            }else if(addOptionsViewModel.CorrectAnswer <= 0 || addOptionsViewModel.CorrectAnswer > question.OptionsNumber)
+            {
+                TempData["Error"] = $"The coorect answer must be between 1 and {question.OptionsNumber}";
+                return View(addOptionsViewModel);
+            }
+            else if(addOptionsViewModel.options.Count < 2){
+                TempData["Error"] = "Wrong credentials. Please try again";
+                return View(addOptionsViewModel);
+            }
+            else if (_context.Options.Any(o => o.QuestionID == id))
+            {
+                TempData["Error"] = "Options for this question already exist.";
+                return View(addOptionsViewModel);
+            }
+            else
+            {
+                int count = 1;
+                foreach(var option in addOptionsViewModel.options)
+                {
+                    count++;
+                    var newOption = new Option
+                    {
+                        OptionText = option.OptionText,
+                        IsCorrect = count == addOptionsViewModel.CorrectAnswer ? true : false,
+                        QuestionID = id,
+                    };
+                    _context.Options.Add(newOption);
+                }
+                _context.SaveChanges();
+                return RedirectToAction("CurrentExams");
+            }
         }
 
         public IActionResult Settings()

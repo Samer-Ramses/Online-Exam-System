@@ -13,9 +13,11 @@
             <th scope="col">#</th>
             <th scope="col">Name</th>
             <th scope="col">Code</th>
+            <th scope="col">Exam Points</th>
             <th scope="col">Start time</th>
             <th scope="col">Status</th>
             <th scope="col">Questions Count</th>
+            <th scope="col">Questions Points Sum</th>
             <th scope="col">Operations</th>
         </tr>
     </thead>
@@ -26,21 +28,27 @@
             {
 
                 count++;
-                                <tr>
-                                    <th scope="row">@count</th>
-                                    <td>@item.ExamName</td>
-                                    <td>@item.ExamCode</td>
-                                    <td>@item.StartTime</td>
-                                    <td>
-                                        <span class="badge bg-info">@(Model.ExamQuestionsPointSum[item.ExamID] < item.ExamPoints ? "Not Completed" : "Completed")</span>
-                                    </td>
-                                    <td>@Model.ExamQuestionCounts[item.ExamID]</td>
-                                    <td>
-                                        <a asp-action="" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-success btn-sm">Add question</a>
-                                        <a asp-action="EditExam" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-primary btn-sm">Edit</a>
-                                        <a asp-action="DeleteExam" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-danger btn-sm">Delete</a>
-                                    </td>
-                                </tr>
+                <tr>
+                    <th scope="row">@count</th>
+                    <td>@item.ExamName</td>
+                    <td>@item.ExamCode</td>
+                    <td>@item.ExamPoints</td>
+                    <td>@item.StartTime</td>
+                    <td>
+                        <span class="badge bg-info">@(Model.ExamQuestionsPointSum[item.ExamID] < item.ExamPoints || Model.isNotCompleted ? "Not Completed" : "Completed")</span>
+                    </td>
+                    <td>@Model.ExamQuestionCounts[item.ExamID]</td>
+                    <td>@Model.ExamQuestionsPointSum[item.ExamID]</td>
+                    <td>
+                        @if (Model.ExamQuestionsPointSum[item.ExamID] != item.ExamPoints )
+                        {
+                            <a asp-action="AddQuestionForm" asp-controller="Instructor" type="button" class="btn btn-success btn-sm">Add question</a>
+                        }
+                        <a asp-action="CurrentQuestion" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-success btn-sm">Current questions</a>
+                        <a asp-action="EditExam" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-primary btn-sm">Edit</a>
+                        <a asp-action="DeleteExam" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
             }
         }
     </tbody>

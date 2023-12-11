@@ -16,6 +16,8 @@ namespace Online_Exam_System.Models
 
         [Required]
         public int QuestionPoints { get; set; }
+        [Required]
+        public int OptionsNumber { get; set; }
 
         [ForeignKey("ExamID")]
         public virtual Exam Exam { get; set; }

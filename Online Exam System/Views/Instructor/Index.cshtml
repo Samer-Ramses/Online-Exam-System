@@ -10,6 +10,9 @@
 }
 
 <h1 class="text-center">Welcome, @userName</h1>
+<div class="mx-auto bg-dark border border-dark d-flex justify-content-center align-items-center" style="width: 100px; height: 100px;">
+	<img class="rounded-circle img-fluid" src="@Url.Action("GetProfilePicture", "Account", new { userId = currentUser.Id })" alt="Profile Picture" style="height: 100px; width: 100px;" />
+</div>
 <div class="row text-center mt-5 gap-5 justify-content-center">
 	<div class="col-sm-3 col-12 border border-light-subtle p-5">
 		<h3>you can add new exam to the system by pressing below button</h3>

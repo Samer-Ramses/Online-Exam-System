@@ -7,5 +7,6 @@ namespace Online_Exam_System.ViewModels
         public IEnumerable<Exam> Exams { get; set; }
         public Dictionary<int, int> ExamQuestionCounts { get; set; }
         public Dictionary<int, int> ExamQuestionsPointSum { get; set; }
+        public bool isNotCompleted { get; set; }
     }
 }

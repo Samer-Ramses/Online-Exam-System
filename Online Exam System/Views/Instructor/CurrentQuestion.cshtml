@@ -1,0 +1,58 @@
+﻿@using Online_Exam_System.ViewModels
+@model CurrentQuestionsViewModel
+
+@{
+    ViewData["Title"] = "Add Question";
+}
+
+<h1>Current Questions</h1>
+
+<a asp-action="CurrentExams" asp-controller="Instructor" type="button" class="my-3 btn btn-primary btn-sm">Back</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Question Text</th>
+            <th scope="col">QuestionPoints</th>
+            <th scope="col">Options Number</th>
+            <th scope="col">Is complete</th>
+            <th scope="col">Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int count = 0;
+            foreach (var item in Model.Questions)
+            {
+
+                count++;
+                <tr>
+                    <th scope="row">@count</th>
+                    <td>@item.QuestionText</td>
+                    <td>@item.QuestionPoints</td>
+                    <td>@item.OptionsNumber</td>
+                    <td>
+                        @{
+                            if(Model.QuestionOptionsCounts[item.QuestionID] == item.OptionsNumber)
+                            {
+                                <span class="badge bg-info">Completed</span>
+                            }
+                            else
+                            {
+                                
+                                <span class="badge bg-info">Not Completed</span>
+                            }
+                        }
+                    </td>
+                    <td>
+                        @if (Model.QuestionOptionsCounts[item.QuestionID] != item.OptionsNumber)
+                        {
+                            <a asp-action="AddOptions" asp-controller="Instructor" asp-route-id=@item.QuestionID type="button" class="btn btn-success btn-sm">Add options</a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
