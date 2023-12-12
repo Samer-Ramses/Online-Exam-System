@@ -40,9 +40,9 @@
                     <td>@Model.ExamQuestionCounts[item.ExamID]</td>
                     <td>@Model.ExamQuestionsPointSum[item.ExamID]</td>
                     <td>
-                        @if (Model.ExamQuestionsPointSum[item.ExamID] != item.ExamPoints )
+                        @if (Model.ExamQuestionsPointSum[item.ExamID] != item.ExamPoints)
                         {
-                            <a asp-action="AddQuestionForm" asp-controller="Instructor" type="button" class="btn btn-success btn-sm">Add question</a>
+                            <a asp-action="AddQuestionForm" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-success btn-sm">Add question</a>
                         }
                         <a asp-action="CurrentQuestion" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-success btn-sm">Current questions</a>
                         <a asp-action="EditExam" asp-controller="Instructor" asp-route-id=@item.ExamID type="button" class="btn btn-primary btn-sm">Edit</a>

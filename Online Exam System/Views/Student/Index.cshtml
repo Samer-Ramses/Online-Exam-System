@@ -16,14 +16,14 @@
 <div class="row text-center mt-5 gap-5 justify-content-center">
 	<div class="col-sm-3 col-12 border border-light-subtle p-5">
 		<h3>you can take your exams by pressing the below button</h3>
-		<a type="button" class="btn btn-primary mt-3" asp-area="" asp-controller="Student" asp-action="TakeExam">Start new Exam</a>
+		<a type="button" class="btn btn-primary mt-3" asp-area="" asp-controller="Student" asp-action="TakeExam" asp-route-id="@currentUser.Id">Start new Exam</a>
 	</div>
 	<div class="col-sm-3 col-12 border border-light-subtle p-5">
 		<h3>you can see all the exams you took by pressing below button</h3>
-		<a type="button" class="btn btn-primary mt-3" asp-area="" asp-controller="Student" asp-action="ExamsHistory">Exams History</a>
+		<a type="button" class="btn btn-primary mt-3" asp-area="" asp-controller="Student" asp-action="ExamsHistory" asp-route-id="@currentUser.Id">Exams History</a>
 	</div>
 	<div class="col-sm-3 col-12 border border-light-subtle p-5">
 		<h3>you can change your information by pressing below button</h3>
-		<a type="button" class="btn btn-primary mt-3" asp-area="" asp-controller="Student" asp-action="Settings">Settings</a>
+		<a type="button" class="btn btn-primary mt-3" asp-area="" asp-controller="Student" asp-action="Settings" asp-route-id="@currentUser.Id">Settings</a>
 	</div>
 </div>

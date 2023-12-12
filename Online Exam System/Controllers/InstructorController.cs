@@ -157,17 +157,18 @@ namespace Online_Exam_System.Controllers
         [HttpPost]
         public async Task<IActionResult> AddQuestionForm(int id, AddQuestionViewModel addQuestionViewModel)
         {
-            if(!ModelState.IsValid) return View(addQuestionViewModel);
-            if(id == null) return View("Error");
+            if (!ModelState.IsValid) return View(addQuestionViewModel);
+            if (id == null) return View("Error");
             var currentUserId = await _userManager.GetUserAsync(User);
             var userId = currentUserId?.Id;
             var theExam = _context.Exams.FirstOrDefault(x => x.ExamID == id);
-            var pointsSum = _context.Questions.Where(q => q.ExamID == theExam.ExamID).Sum(q => q.QuestionPoints);
             if (theExam == null || theExam.InstructorID != userId)
             {
                 TempData["Error"] = "Wrong credentials. Please try again";
                 return View(addQuestionViewModel);
-            }else if(theExam.ExamPoints < pointsSum + addQuestionViewModel.QuestionPoints)
+            }
+            var pointsSum = _context.Questions.Where(q => q.ExamID == theExam.ExamID).Sum(q => q.QuestionPoints);
+            if (theExam.ExamPoints < pointsSum + addQuestionViewModel.QuestionPoints)
             {
                 TempData["Error"] = "The question points are larger than exam points";
                 return View(addQuestionViewModel);
@@ -192,7 +193,7 @@ namespace Online_Exam_System.Controllers
         {
             var question = _context.Questions.FirstOrDefault(x => x.QuestionID == id);
             var options = new List<OptionViewModel>();
-            for(int i = 0; i < question.OptionsNumber; i++)
+            for (int i = 0; i < question.OptionsNumber; i++)
             {
                 var option = new OptionViewModel();
                 options.Add(option);
@@ -217,12 +218,14 @@ namespace Online_Exam_System.Controllers
             {
                 TempData["Error"] = "Wrong credentials. Please try again";
                 return View(addOptionsViewModel);
-            }else if(addOptionsViewModel.CorrectAnswer <= 0 || addOptionsViewModel.CorrectAnswer > question.OptionsNumber)
+            }
+            else if (addOptionsViewModel.CorrectAnswer <= 0 || addOptionsViewModel.CorrectAnswer > question.OptionsNumber)
             {
                 TempData["Error"] = $"The coorect answer must be between 1 and {question.OptionsNumber}";
                 return View(addOptionsViewModel);
             }
-            else if(addOptionsViewModel.options.Count < 2){
+            else if (addOptionsViewModel.options.Count < 2)
+            {
                 TempData["Error"] = "Wrong credentials. Please try again";
                 return View(addOptionsViewModel);
             }
@@ -234,7 +237,7 @@ namespace Online_Exam_System.Controllers
             else
             {
                 int count = 1;
-                foreach(var option in addOptionsViewModel.options)
+                foreach (var option in addOptionsViewModel.options)
                 {
                     count++;
                     var newOption = new Option
@@ -252,7 +255,7 @@ namespace Online_Exam_System.Controllers
 
         public IActionResult Settings(string id)
         {
-            var user = _context.Users.FirstOrDefault(user => user.Id ==  id);
+            var user = _context.Users.FirstOrDefault(user => user.Id == id);
             if (user == null) return View("Error");
             var settingsVM = new SettingsViewModel
             {
@@ -277,12 +280,12 @@ namespace Online_Exam_System.Controllers
             {
                 user.name = settingsViewModel.Name;
                 user.Email = settingsViewModel.EmailAddress;
-                if(settingsViewModel.Password != null)
+                if (settingsViewModel.Password != null)
                 {
                     await _userManager.RemovePasswordAsync(user);
                     await _userManager.AddPasswordAsync(user, settingsViewModel.Password);
                 }
-                if(settingsViewModel.ProfilePicture  != null)
+                if (settingsViewModel.ProfilePicture != null)
                 {
                     // Process profile picture
                     if (settingsViewModel.ProfilePicture != null && settingsViewModel.ProfilePicture.Length > 0)
