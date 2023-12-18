@@ -5,9 +5,7 @@ namespace Online_Exam_System.Models
 {
     public class UserAnswer
     {
-        [Key]
-        public int AttemptID { get; set; }
-
+		public int AttemptID { get; set; }
         public int QuestionID { get; set; }
 
         [Required]

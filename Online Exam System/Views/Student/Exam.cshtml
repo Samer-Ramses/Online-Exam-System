@@ -1,0 +1,52 @@
+﻿@using Online_Exam_System.ViewModels;
+
+@model ExamViewModel
+
+<div class="exam-information p-3 bg-info rounded">
+	<h1 class="text-center">Exam: @Model?.Exam?.ExamName</h1>
+	<div class="row fs-4 text-center">
+		<div class="col-md-6 col">
+			<p>Exam duration: @Model.Exam.DurationMinutes Minutes</p>
+			<p>Exam questions: @Model.Questions.Count() questions</p>
+		</div>
+		<div class="col-md-6 col">
+			<p>Exam points: @Model.Exam.ExamPoints Points</p>
+			<p>Instructor: @Model.InstructorName</p>
+		</div>
+	</div>
+</div>
+<form asp-action="Exam">
+	<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+	<input type="hidden" asp-for="InstructorName" value="@Model.InstructorName" />
+	<input type="hidden" asp-for="StartTime" value="@Model.StartTime" />
+	<input type="hidden" asp-for="Exam" value="@Model.Exam" />
+	<input type="hidden" asp-for="Questions" value="@Model.Questions" />
+	<input type="hidden" asp-for="Options" value="@Model.Options" />
+
+		@{
+			int questionIndex = 1;
+			for(int i = 0; i < Model.Questions.Count(); i++)
+			{
+				<div class="form-group m-3">
+					<label class="control-label fs-5">@questionIndex. @Model.Questions[i].QuestionText. <span class="text-info fs-6">@Model.Questions[i].QuestionPoints points</span></label>
+					<select asp-for="OptionId[i].OptionId" class="form-select">
+					@{
+							<option value="@null" selected></option>
+							for(int j = 0; j < Model.Options.Count; j++)
+							{
+								if (Model.Options[j].QuestionID == Model.Questions[i].QuestionID)
+								{
+									<option value="@Model.Options[j].OptionID">@Model.Options[j].OptionText</option>
+								}
+							}
+						}
+						<span asp-validation-for="OptionId[i].OptionId" class="text-danger"></span>
+					</select>
+				</div>
+				questionIndex++;
+			}
+		}
+	<div class="form-group d-flex justify-content-center gap-1">
+		<input class="btn btn-outline-danger" type="submit" value="Submit" />
+	</div>
+</form>

@@ -38,6 +38,11 @@ namespace Online_Exam_System.Controllers
         {
             if (!ModelState.IsValid) return View(createExamViewModel);
             var currentUser = await _userManager.GetUserAsync(User);
+            if(_context.Exams.Any(exam => exam.ExamCode == createExamViewModel.ExamCode))
+            {
+				ModelState.AddModelError("", "Failed to create because exam code is used");
+				return View("CreateExam", createExamViewModel);
+			}
             var exam = new Exam()
             {
                 ExamName = createExamViewModel.ExamName,
@@ -106,7 +111,12 @@ namespace Online_Exam_System.Controllers
                 ModelState.AddModelError("", "Failed to edit");
                 return View("EditExam", editExamViewModel);
             }
-            var exam = _context.Exams.FirstOrDefault(exam => exam.ExamID.ToString() == id);
+			if (_context.Exams.Any(exam => exam.ExamCode == editExamViewModel.ExamCode))
+			{
+				ModelState.AddModelError("", "Failed to create because exam code is used");
+				return View("CreateExam", editExamViewModel);
+			}
+			var exam = _context.Exams.FirstOrDefault(exam => exam.ExamID.ToString() == id);
             if (exam != null)
             {
                 exam.ExamName = editExamViewModel.ExamName;
@@ -129,6 +139,12 @@ namespace Online_Exam_System.Controllers
 
         public IActionResult DeleteExam(string id)
         {
+            var examAttmpt = _context.ExamAttempts.Where(attm => attm.ExamID.ToString() == id);
+            if(examAttmpt != null)
+            {
+                TempData["Error"] = "you can't delete exam that have been taken by students";
+                return RedirectToAction("CurrentExams");
+            }
             var exam = _context.Exams.FirstOrDefault(x => x.ExamID.ToString() == id);
             if (exam == null) return View("Error");
             _context.Exams.Remove(exam);
@@ -236,7 +252,7 @@ namespace Online_Exam_System.Controllers
             }
             else
             {
-                int count = 1;
+                int count = 0;
                 foreach (var option in addOptionsViewModel.options)
                 {
                     count++;

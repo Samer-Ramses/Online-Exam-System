@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Online_Exam_System.Models;
 using System;
+using System.Reflection.Emit;
 
 namespace Online_Exam_System.Data
 {
@@ -21,7 +22,10 @@ namespace Online_Exam_System.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+			builder.Entity<UserAnswer>()
+				.HasKey(ua => new { ua.AttemptID, ua.QuestionID });
+
+			base.OnModelCreating(builder);
             builder.Entity<IdentityRole>().HasData(SeedRoles());
             builder.Entity<User>().HasData(SeedSuperAdmin());
             builder.Entity<IdentityUserRole<string>>().HasData(
