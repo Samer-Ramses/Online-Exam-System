@@ -49,6 +49,7 @@
                         @if (Model.QuestionOptionsCounts[item.QuestionID] != item.OptionsNumber)
                         {
                             <a asp-action="AddOptions" asp-controller="Instructor" asp-route-id=@item.QuestionID type="button" class="btn btn-success btn-sm">Add options</a>
+                            <a asp-action="DeleteQuestion" asp-controller="Instructor" asp-route-id=@item.QuestionID type="button" class="btn btn-danger btn-sm">Delete</a>
                         }
                     </td>
                 </tr>

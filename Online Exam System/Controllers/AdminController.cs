@@ -49,8 +49,8 @@ namespace Online_Exam_System.Controllers
 			{
 				Email = createUserViewModel.EmailAddress,
 				UserName = createUserViewModel.EmailAddress,
-				name = createUserViewModel.Name,
-				role = createUserViewModel.Role,
+				Name = createUserViewModel.Name,
+				Role = createUserViewModel.Role,
 			};
 			var newUserResponse = await _userManager.CreateAsync(newUser, createUserViewModel.Password);
 			if (!newUserResponse.Succeeded)
@@ -108,11 +108,11 @@ namespace Online_Exam_System.Controllers
 			if (user == null) return View("Error");
 			var editUserVM = new EditUserViewModel()
 			{
-				Name = user.name,
+				Name = user.Name,
 				EmailAddress = user.Email,
 				Password = "",
 				ConfirmPassword = "",
-				Role = user.role,
+				Role = user.Role,
 			};
 			return View(editUserVM);
 		}
@@ -128,9 +128,9 @@ namespace Online_Exam_System.Controllers
 			var user = _context.Users.FirstOrDefault(x => x.Id == id);
 			if (user != null)
 			{
-				user.name = editUserViewModel.Name;
+				user.Name = editUserViewModel.Name;
 				user.Email = editUserViewModel.EmailAddress;
-				user.role = editUserViewModel.Role;
+				user.Role = editUserViewModel.Role;
 				await _userManager.RemovePasswordAsync(user);
 				await _userManager.AddPasswordAsync(user, editUserViewModel.Password);
 				var editedUserResponse = await _userManager.UpdateAsync(user);
@@ -147,7 +147,7 @@ namespace Online_Exam_System.Controllers
 			if (user == null) return View("Error");
 			var editUserVM = new AdminSettingsViewModel()
 			{
-				Name = user.name,
+				Name = user.Name,
 				EmailAddress = user.Email,
 				Password = "",
 				ConfirmPassword = "",
@@ -166,7 +166,7 @@ namespace Online_Exam_System.Controllers
 			var user = _context.Users.FirstOrDefault(x => x.Id == id);
 			if (user != null)
 			{
-				user.name = adminSettingsViewModel.Name;
+				user.Name = adminSettingsViewModel.Name;
 				user.Email = adminSettingsViewModel.EmailAddress;
 				await _userManager.RemovePasswordAsync(user);
 				await _userManager.AddPasswordAsync(user, adminSettingsViewModel.Password);

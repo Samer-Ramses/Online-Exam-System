@@ -104,7 +104,7 @@ namespace Online_Exam_System.Controllers
 						.Where(q => q.ExamID == exam.ExamID)
 						.SelectMany(question => _context.Options.Where(option => option.QuestionID == question.QuestionID))
 						.ToList();
-			var instructorName = _context.Users.FirstOrDefault(user => user.Id == exam.InstructorID)?.name;
+			var instructorName = _context.Users.FirstOrDefault(user => user.Id == exam.InstructorID)?.Name;
 
             var viewModel = new ExamViewModel {
 				Exam = exam,
@@ -135,16 +135,20 @@ namespace Online_Exam_System.Controllers
 			examViewModel.Questions = examQuestions;
 			examViewModel.Options = options;
 
-			if (id == null) return View("Error");
-			if (!ModelState.IsValid) return View(examViewModel);
-			// Getting User id
-			var currentUserId = await _userManager.GetUserAsync(User);
-			var userId = currentUserId?.Id;
+			if (!ModelState.IsValid)
+			{
+                TempData["Error"] = "You can not submit without answering all questions";
+                return View(examViewModel);
+            }
+
+			var currentUser = await _userManager.GetUserAsync(User);
+			var currentUserId = currentUser?.Id;
+
 			//make user attmpt
 			var userAttmpt = new ExamAttempt
 			{
 				ExamID = exam.ExamID,
-				UserID = userId,
+				UserID = currentUserId,
 				StartTime = examViewModel.StartTime,
 				EndTime = DateTime.Now,
 			};
@@ -221,7 +225,7 @@ namespace Online_Exam_System.Controllers
 			var settingsVM = new SettingsViewModel
 			{
 				EmailAddress = user.Email,
-				Name = user.name,
+				Name = user.Name,
 				Password = "",
 				ConfirmPassword = "",
 			};
@@ -239,7 +243,7 @@ namespace Online_Exam_System.Controllers
 			var user = _context.Users.FirstOrDefault(x => x.Id == id);
 			if (user != null)
 			{
-				user.name = settingsViewModel.Name;
+				user.Name = settingsViewModel.Name;
 				user.Email = settingsViewModel.EmailAddress;
 				if (settingsViewModel.Password != null)
 				{

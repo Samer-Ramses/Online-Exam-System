@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Online_Exam_System.Data;
 using Online_Exam_System.Models;
 using Online_Exam_System.ViewModels;
@@ -78,7 +79,7 @@ namespace Online_Exam_System.Controllers
                 Exams = userExams,
                 ExamQuestionCounts = examQuestionCounts,
                 ExamQuestionsPointSum = examQuestionsPointsSum,
-                isNotCompleted = isNotCompleted,
+                IsNotCompleted = isNotCompleted,
             };
 
             return View(viewModel);
@@ -111,11 +112,6 @@ namespace Online_Exam_System.Controllers
                 ModelState.AddModelError("", "Failed to edit");
                 return View("EditExam", editExamViewModel);
             }
-			if (_context.Exams.Any(exam => exam.ExamCode == editExamViewModel.ExamCode))
-			{
-				ModelState.AddModelError("", "Failed to create because exam code is used");
-				return View("CreateExam", editExamViewModel);
-			}
 			var exam = _context.Exams.FirstOrDefault(exam => exam.ExamID.ToString() == id);
             if (exam != null)
             {
@@ -139,8 +135,8 @@ namespace Online_Exam_System.Controllers
 
         public IActionResult DeleteExam(string id)
         {
-            var examAttmpt = _context.ExamAttempts.Where(attm => attm.ExamID.ToString() == id);
-            if(examAttmpt != null)
+            var examAttmpts = _context.ExamAttempts.Where(attm => attm.ExamID.ToString() == id);
+            if(examAttmpts.Count() > 0)
             {
                 TempData["Error"] = "you can't delete exam that have been taken by students";
                 return RedirectToAction("CurrentExams");
@@ -150,6 +146,30 @@ namespace Online_Exam_System.Controllers
             _context.Exams.Remove(exam);
             _context.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Stats(string id)
+        {
+            var examAttmpts = _context.ExamAttempts.Where(att => att.ExamID.ToString() == id).ToList();
+            if(!examAttmpts.Any())
+            {
+                TempData["Error"] = "the exam dose't have any stats yet or it may dose't exist";
+                return RedirectToAction("CurrentExams");
+            }
+            var examStats = new List<StatsViewModel>();
+
+            foreach (var attempt in examAttmpts)
+            {
+                var examStat = new StatsViewModel
+                {
+                    Exam = _context.Exams.FirstOrDefault(exam => exam.ExamID == attempt.ExamID),
+                    User = _context.Users.FirstOrDefault(user => user.Id == attempt.UserID),
+                    ExamResult = _context.ExamResults.FirstOrDefault(res => res.AttemptID == attempt.AttemptID),
+                };
+                examStats.Add(examStat);
+            }
+
+            return View(examStats);
         }
 
         public IActionResult CurrentQuestion(int id)
@@ -175,10 +195,10 @@ namespace Online_Exam_System.Controllers
         {
             if (!ModelState.IsValid) return View(addQuestionViewModel);
             if (id == null) return View("Error");
-            var currentUserId = await _userManager.GetUserAsync(User);
-            var userId = currentUserId?.Id;
+            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUserId = currentUser?.Id;
             var theExam = _context.Exams.FirstOrDefault(x => x.ExamID == id);
-            if (theExam == null || theExam.InstructorID != userId)
+            if (theExam == null || theExam.InstructorID != currentUserId)
             {
                 TempData["Error"] = "Wrong credentials. Please try again";
                 return View(addQuestionViewModel);
@@ -201,8 +221,23 @@ namespace Online_Exam_System.Controllers
 
                 _context.Questions.Add(newQuestion);
                 _context.SaveChanges();
-                return RedirectToAction("CurrentExams", "Instructor");
+                return RedirectToAction("CurrentQuestion", "Instructor", new { id = theExam.ExamID.ToString() });
             }
+        }
+
+        public IActionResult DeleteQuestion(string id)
+        {
+            var question = _context.Questions.FirstOrDefault(q => q.QuestionID.ToString() == id);
+            if (question == null) return View("Error");
+            var examAttmpts = _context.ExamAttempts.Where(attm => attm.ExamID == question.ExamID);
+            if (examAttmpts.Count() > 0)
+            {
+                TempData["Error"] = "you can't delete question in exam that have been taken by students";
+                return RedirectToAction("CurrentExams");
+            }
+            _context.Questions.Remove(question);
+            _context.SaveChanges();
+            return RedirectToAction("CurrentQuestion", "Instructor", new { id = question.ExamID.ToString() });
         }
 
         public IActionResult AddOptions(int id)
@@ -216,7 +251,7 @@ namespace Online_Exam_System.Controllers
             }
             var viewModel = new AddOptionsViewModel
             {
-                options = options,
+                Options = options,
             };
             return View(viewModel);
         }
@@ -240,7 +275,7 @@ namespace Online_Exam_System.Controllers
                 TempData["Error"] = $"The coorect answer must be between 1 and {question.OptionsNumber}";
                 return View(addOptionsViewModel);
             }
-            else if (addOptionsViewModel.options.Count < 2)
+            else if (addOptionsViewModel.Options.Count < 2)
             {
                 TempData["Error"] = "Wrong credentials. Please try again";
                 return View(addOptionsViewModel);
@@ -253,7 +288,7 @@ namespace Online_Exam_System.Controllers
             else
             {
                 int count = 0;
-                foreach (var option in addOptionsViewModel.options)
+                foreach (var option in addOptionsViewModel.Options)
                 {
                     count++;
                     var newOption = new Option
@@ -265,7 +300,7 @@ namespace Online_Exam_System.Controllers
                     _context.Options.Add(newOption);
                 }
                 _context.SaveChanges();
-                return RedirectToAction("CurrentExams");
+                return RedirectToAction("CurrentQuestion", "Instructor", new {id = theExam.ExamID.ToString()});
             }
         }
 
@@ -276,7 +311,7 @@ namespace Online_Exam_System.Controllers
             var settingsVM = new SettingsViewModel
             {
                 EmailAddress = user.Email,
-                Name = user.name,
+                Name = user.Name,
                 Password = "",
                 ConfirmPassword = "",
             };
@@ -294,7 +329,7 @@ namespace Online_Exam_System.Controllers
             var user = _context.Users.FirstOrDefault(x => x.Id == id);
             if (user != null)
             {
-                user.name = settingsViewModel.Name;
+                user.Name = settingsViewModel.Name;
                 user.Email = settingsViewModel.EmailAddress;
                 if (settingsViewModel.Password != null)
                 {

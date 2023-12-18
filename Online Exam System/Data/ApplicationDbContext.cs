@@ -59,7 +59,7 @@ namespace Online_Exam_System.Data
                 NormalizedUserName = "TEMPORARY-USERNAME",
                 Email = "TemporaryEmail@example.com",
                 NormalizedEmail = "TEMPORARYEMAIL@EXAMPLE.COM",
-                name = "Temporary first Name",
+                Name = "Temporary first Name",
                 EmailConfirmed = true,
                 PasswordHash = hasher.HashPassword(null, "TemporaryPassword"),
                 SecurityStamp = string.Empty

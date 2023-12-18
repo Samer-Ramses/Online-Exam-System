@@ -1,0 +1,48 @@
+﻿@using Online_Exam_System.ViewModels
+@model List<StatsViewModel>
+
+@{
+    ViewData["Title"] = "Exam Stats";
+}
+
+<h1>@Model[0].Exam.ExamName Stats with total points of @Model[0].Exam.ExamPoints</h1>
+
+<a asp-action="CurrentExams" asp-controller="Instructor" type="button" class="my-3 btn btn-primary btn-sm">Back</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Student Name</th>
+            <th scope="col">Student degree</th>
+            <th scope="col">Student Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int count = 0;
+            foreach (var result in Model)
+            {
+
+                count++;
+                <tr>
+                    <th scope="row">@count</th>
+                    <td>@result.User.Name</td>
+                    <td>@result.ExamResult.Score</td>
+                    <td>
+                        @{
+                            if(result.ExamResult.Score >= result.Exam.SuccessDegree)
+                            {
+                                <span class="badge bg-success">Passed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Failed</span>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

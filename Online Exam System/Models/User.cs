@@ -6,8 +6,8 @@ namespace Online_Exam_System.Models
 {
     public class User : IdentityUser
     {
-        public string? name { get; set; }
-        public string? role { get; set; }
+        public string? Name { get; set; }
+        public string? Role { get; set; }
         public byte[]? ProfilePictureData { get; set; }
 
     }

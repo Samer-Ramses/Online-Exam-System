@@ -6,7 +6,7 @@
 @{
 	ViewData["Title"] = "Instructor Control Panel";
 	var currentUser = await UserManager.GetUserAsync(User);
-	var userName = currentUser.name == null ? "Unknown" : currentUser.name;
+	var userName = currentUser.Name == null ? "Unknown" : currentUser.Name;
 }
 
 <h1 class="text-center">Welcome, @userName</h1>

@@ -77,7 +77,8 @@ namespace Online_Exam_System.Controllers
             {
                 Email = registerViewModel.EmailAddress,
                 UserName = registerViewModel.EmailAddress,
-                role = Roles.student,
+                Role = Roles.student,
+                Name = registerViewModel.Name,
             };
             var newUserResponse = await _userManager.CreateAsync(newUser, registerViewModel.Password);
             if(!newUserResponse.Succeeded)

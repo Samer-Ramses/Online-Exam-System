@@ -7,6 +7,8 @@ namespace Online_Exam_System.ViewModels
         [Display(Name = "Email address")]
         [Required(ErrorMessage = "Email address is required")]
         public string EmailAddress { get; set; }
+        [Required(ErrorMessage = "The name is required")]
+        public string Name { get; set; }
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }

@@ -21,14 +21,14 @@
             int count = 0;
             foreach (var item in Model)
             {
-                if (item.role == null)
+                if (item.Role == null)
                     continue;
                 count++;
                 <tr>
                     <th scope="row">@count</th>
-                    <td>@item.name</td>
+                    <td>@item.Name</td>
                     <td>@item.Email</td>
-                    <td>@item.role</td>
+                    <td>@item.Role</td>
                     <td>
                         <a asp-action="EditUser" asp-controller="Admin" asp-route-id=@item.Id type="button" class="btn btn-primary btn-sm">Edit</a>
                         <a asp-action="DeleteUser" asp-controller="Admin" asp-route-id=@item.Id type="button" class="btn btn-danger btn-sm">Delete</a>
