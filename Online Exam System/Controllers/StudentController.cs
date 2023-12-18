@@ -200,11 +200,21 @@ namespace Online_Exam_System.Controllers
 			_context.SaveChanges();
 			return RedirectToAction("Index");
 		}
-		public IActionResult ExamsHistory()
-		{
-            return View();
-		}
-		public IActionResult Settings(string id)
+        public IActionResult ExamsHistory(string id)
+        {
+            var examsAndResults = _context.ExamAttempts
+            .Where(ea => ea.UserID == id)
+            .Include(ea => ea.Exam)
+            .Select(ea => new { Exam = ea.Exam, Result = _context.ExamResults.FirstOrDefault(er => er.AttemptID == ea.AttemptID) })
+            .ToList();
+
+            var viewModel = examsAndResults
+            .Select(ea => (exam: ea.Exam, result: ea.Result))
+            .ToList();
+
+            return View(viewModel);
+        }
+        public IActionResult Settings(string id)
 		{
 			var user = _context.Users.FirstOrDefault(user => user.Id == id);
 			if (user == null) return View("Error");

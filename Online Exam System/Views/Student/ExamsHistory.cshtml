@@ -1,8 +1,35 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<(Exam exam, ExamResult result)>
+
 @{
     ViewData["Title"] = "Exams history";
 }
 
-<h1>History of all exams studnet take</h1>
+<h1>History of all exams you take</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Exam Name</th>
+            <th scope="col">Exam Degree</th>
+            <th scope="col">Success Degree</th>
+            <th scope="col">Your Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int count = 0;
+            foreach (var (exam, result) in Model)
+            {
+                count++;
+                <tr>
+                    <th scope="row">@count</th>
+                    <td>@exam.ExamName</td>
+                    <td>@exam.ExamPoints</td>
+                    <td>@exam.SuccessDegree</td>
+                    <td>@(result?.Score ?? 0)</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
